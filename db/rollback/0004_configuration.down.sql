@@ -1,0 +1,13 @@
+drop table if exists validation_signoff;
+drop table if exists notification_template;
+drop table if exists price_list;
+drop table if exists tax_rate_component;
+drop table if exists tax_rate;
+drop table if exists tax_code;
+drop table if exists tax_profile;
+drop table if exists reason_code;
+drop table if exists config_branch_override;
+drop table if exists config_version;
+drop table if exists config_setting;
+drop table if exists translation;
+drop table if exists locale;

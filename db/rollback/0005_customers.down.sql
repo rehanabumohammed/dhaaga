@@ -1,0 +1,17 @@
+drop table if exists attachment;
+drop table if exists measurement_snapshot;
+drop table if exists measurement_value;
+drop table if exists measurement_revision;
+drop table if exists measurement_profile;
+drop table if exists template_field;
+drop table if exists measurement_template;
+drop table if exists price_list_item;
+drop table if exists style_option;
+drop table if exists style_option_group;
+drop table if exists garment_type;
+drop table if exists customer_merge;
+drop table if exists duplicate_candidate;
+drop table if exists customer_contact;
+drop table if exists household_member;
+drop table if exists customer;
+drop table if exists household;

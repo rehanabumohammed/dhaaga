@@ -1,0 +1,18 @@
+drop trigger if exists b_invoice_watermark on invoice;
+drop trigger if exists b_config_branch_override_permission on config_branch_override;
+drop trigger if exists b_config_version_permission on config_version;
+drop trigger if exists b_config_setting_permission on config_setting;
+drop function if exists app.set_invoice_watermark();
+drop function if exists app.record_validation_signoff(text, text, text, text, date, text);
+drop function if exists app.validation_status(text, uuid);
+drop function if exists app.config_hash(text, uuid);
+drop function if exists app.tax_rate_at(text, date, uuid);
+drop function if exists app.set_config_value(text, jsonb, timestamptz, text, text, uuid);
+drop function if exists app.enforce_config_permission();
+drop function if exists app.config_bool(text, uuid, uuid, timestamptz);
+drop function if exists app.config_decimal(text, uuid, uuid, timestamptz);
+drop function if exists app.config_int(text, uuid, uuid, timestamptz);
+drop function if exists app.config_text(text, uuid, uuid, timestamptz);
+drop function if exists app.config_value(text, uuid, uuid, timestamptz);
+drop function if exists app.has_permission(text);
+drop function if exists app.assert_tenant_read(uuid);

@@ -1,0 +1,12 @@
+drop table if exists audit_event;
+drop table if exists number_void;
+drop table if exists number_lease;
+drop table if exists number_series;
+drop table if exists device;
+drop table if exists user_branch_role;
+drop table if exists role_permission;
+drop table if exists role;
+drop table if exists permission;
+drop table if exists app_user;
+drop table if exists branch;
+drop table if exists business;

@@ -1,0 +1,15 @@
+drop view if exists ledger_trial_balance;
+drop index if exists journal_entry_one_reversal_per_original;
+drop function if exists app.reverse_journal_entry(uuid, text, text, date);
+drop function if exists app.post_entry(uuid, uuid, text, uuid, text, jsonb, date);
+drop trigger if exists a_journal_entry_period on journal_entry;
+drop function if exists app.assign_and_check_period();
+drop trigger if exists zzz_journal_line_immutable on journal_line;
+drop trigger if exists zzz_journal_entry_immutable on journal_entry;
+drop function if exists app.ledger_immutable();
+drop trigger if exists zzz_journal_entry_has_lines on journal_entry;
+drop function if exists app.assert_entry_has_lines();
+drop trigger if exists zzz_journal_line_balanced on journal_line;
+drop function if exists app.assert_entry_balanced();
+grant update, delete on journal_entry to authenticated;
+grant update, delete on journal_line to authenticated;

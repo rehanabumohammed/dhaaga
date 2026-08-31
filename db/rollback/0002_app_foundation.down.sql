@@ -1,0 +1,10 @@
+drop domain if exists app.rate_percent;
+drop domain if exists app.quantity;
+drop domain if exists app.money_amount;
+drop function if exists app.attach_standard_triggers(text);
+drop function if exists app.touch_row();
+drop function if exists app.current_reason();
+drop function if exists app.current_device_id();
+drop function if exists app.current_user_id();
+drop function if exists app.jwt();
+drop schema if exists app cascade;
