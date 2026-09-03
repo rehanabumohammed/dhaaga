@@ -1,0 +1,32 @@
+# Message-catalogue generation for application chrome.
+#
+# What belongs in these catalogues and what does not is a hard boundary, set by
+# migration 0004 and repeated here because getting it wrong is the most damaging
+# mistake available to the client:
+#
+#   * APPLICATION CHROME  -> these .arb files.  Buttons, headings, validation
+#     messages, and the display labels for the schema's fixed enumerations
+#     (a sales order's `draft`, a lease's `exhausted`) and the fixed
+#     reason_code domains.  The product owns these words.
+#
+#   * TENANT-OWNED LABELS -> the `translation` table, read at runtime.  A
+#     workflow stage called "Cutting", a role called "Counter Staff", a payment
+#     mode, a garment type, a measurement field label.  THE SHOP OWNER owns
+#     these words and can rename them (AP-1).  Putting one of them in here
+#     silently breaks every shop that renames it.
+#
+#   * USER-ENTERED CONTENT -> rendered verbatim from the row.
+#
+# 0004_configuration.sql:58 — "Application chrome is translated in the Flutter
+# message catalogues; this table exists for data the tenant owns and can add to."
+
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+
+# Surfaces any key present in the template but missing from a locale. This is
+# the early warning; the hard gate is test/l10n/catalogue_completeness_test.dart,
+# which fails the suite rather than printing a note.
+untranslated-messages-file: build/l10n_untranslated.json

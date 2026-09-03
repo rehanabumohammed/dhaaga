@@ -1,5 +1,5 @@
 name: dhaaga
-description: "A new Flutter project."
+description: "Dhaaga — the operating system for the modern tailoring business."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -31,6 +31,20 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Message catalogues for application chrome, and the locale delegates behind
+  # them. Ships with the Flutter SDK, so this adds no third-party surface.
+  # Adopted for its BUILD-TIME MISSING-KEY FAILURE, not for convenience: a
+  # hand-rolled map would localise just as well and would let a missing Hindi
+  # key reach a shop unnoticed. See ADR-0014.
+  flutter_localizations:
+    sdk: flutter
+
+  # Pulled in by gen-l10n, and needed in its own right for en-IN number
+  # grouping: 1,00,000 rather than 100,000. Getting that wrong in a tool whose
+  # job is cash visibility is a defect, not a cosmetic slip. Dart-team
+  # maintained. See ADR-0014.
+  intl: any
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -51,6 +65,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  # Generates lib/l10n/app_localizations.dart from the .arb catalogues on
+  # `flutter pub get`. Configuration lives in l10n.yaml at the repository root.
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

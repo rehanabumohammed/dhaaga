@@ -1,0 +1,176 @@
+{
+  "@@locale": "hi",
+  "appTitle": "Dhaaga",
+  "@appTitle": {
+    "description": "The application name. Hindi and Urdu for 'thread' (ADR-0005); a proper noun, so it is not translated."
+  },
+  "stateLoading": "Loading",
+  "@stateLoading": {
+    "description": "Shown while content is being fetched. Deliberately not 'Please wait': staff are not waiting, they are working."
+  },
+  "stateEmpty": "Nothing here yet",
+  "@stateEmpty": {
+    "description": "Generic empty state. A caller with a better sentence should pass one: 'no orders yet' beats this."
+  },
+  "stateError": "That did not work",
+  "@stateError": {
+    "description": "Generic error state. Distinct from empty on purpose: empty and failed demand opposite reactions from staff."
+  },
+  "actionRetry": "Try again",
+  "@actionRetry": {
+    "description": "Retry affordance on an error state."
+  },
+  "stateDisabledHint": "Not available right now",
+  "@stateDisabledHint": {
+    "description": "Semantic label for a disabled control, so a screen reader explains inertness rather than silence."
+  },
+  "measurementWhole": "Whole",
+  "@measurementWhole": {
+    "description": "Label for the whole-number part of a fractional measurement entry."
+  },
+  "measurementFraction": "Fraction",
+  "@measurementFraction": {
+    "description": "Label for the fraction part of a fractional measurement entry."
+  },
+  "measurementFractionNone": "None",
+  "@measurementFractionNone": {
+    "description": "The zero option in a fraction picker: a whole number with no fractional part."
+  },
+  "measurementInvalid": "Enter a number",
+  "@measurementInvalid": {
+    "description": "Validation message when a measurement entry cannot be read as a number."
+  },
+  "measurementCleared": "Cleared",
+  "@measurementCleared": {
+    "description": "Semantic announcement when a measurement value is removed."
+  },
+  "reasonPromptTitle": "Why?",
+  "@reasonPromptTitle": {
+    "description": "Heading on the reason prompt. Short on purpose: it is asked often, and a long question gets skipped."
+  },
+  "reasonPromptChoose": "Choose a reason",
+  "@reasonPromptChoose": {
+    "description": "Placeholder for the reason selector."
+  },
+  "reasonPromptDetail": "Anything to add?",
+  "@reasonPromptDetail": {
+    "description": "Label for the optional free-text field on a reason prompt."
+  },
+  "reasonPromptDetailRequired": "Say what happened",
+  "@reasonPromptDetailRequired": {
+    "description": "Label for the free-text field when reason_code.requires_text is true and the text is mandatory."
+  },
+  "reasonRequired": "A reason is needed before this can be saved",
+  "@reasonRequired": {
+    "description": "Validation message when a mandatory reason has not been chosen."
+  },
+  "offlineWorking": "Working offline",
+  "@offlineWorking": {
+    "description": "Shown when the device has no connection. Not an error: offline work is expected and supported."
+  },
+  "offlineUnsynced": "{hours, plural, =0{Not synced yet} =1{Unsynced for 1 hour} other{Unsynced for {hours} hours}}",
+  "@offlineUnsynced": {
+    "description": "How long this device has been unable to send its work to the server.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "offlineTooLong": "This device has been offline a long time. Connect when you can.",
+  "@offlineTooLong": {
+    "description": "Escalated state, shown once the unsynced duration passes the offline.warn_after_hours setting. The threshold is configuration and never appears in the client."
+  },
+  "statusUnknown": "Unknown",
+  "@statusUnknown": {
+    "description": "Fallback when a status code has no label. Should never reach a user; a raw code reaching a user is the failure this prevents."
+  },
+  "statusOrderDraft": "Draft",
+  "@statusOrderDraft": {
+    "description": "sales_order.lifecycle = draft"
+  },
+  "statusOrderConfirmed": "Confirmed",
+  "@statusOrderConfirmed": {
+    "description": "sales_order.lifecycle = confirmed"
+  },
+  "statusOrderCancelled": "Cancelled",
+  "@statusOrderCancelled": {
+    "description": "sales_order.lifecycle = cancelled"
+  },
+  "statusLeaseActive": "In use",
+  "@statusLeaseActive": {
+    "description": "number_lease.status = active"
+  },
+  "statusLeaseExhausted": "Used up",
+  "@statusLeaseExhausted": {
+    "description": "number_lease.status = exhausted"
+  },
+  "statusLeaseExpired": "Expired",
+  "@statusLeaseExpired": {
+    "description": "number_lease.status = expired"
+  },
+  "statusLeaseReturned": "Returned",
+  "@statusLeaseReturned": {
+    "description": "number_lease.status = returned"
+  },
+  "statusTransferDraft": "Draft",
+  "@statusTransferDraft": {
+    "description": "stock_transfer.status = draft"
+  },
+  "statusTransferInTransit": "On the way",
+  "@statusTransferInTransit": {
+    "description": "stock_transfer.status = in_transit"
+  },
+  "statusTransferReceived": "Received",
+  "@statusTransferReceived": {
+    "description": "stock_transfer.status = received"
+  },
+  "statusTransferCancelled": "Cancelled",
+  "@statusTransferCancelled": {
+    "description": "stock_transfer.status = cancelled"
+  },
+  "statusDocumentDraft": "Draft",
+  "@statusDocumentDraft": {
+    "description": "tax document status = draft"
+  },
+  "statusDocumentIssued": "Issued",
+  "@statusDocumentIssued": {
+    "description": "tax document status = issued"
+  },
+  "statusDocumentCancelled": "Cancelled",
+  "@statusDocumentCancelled": {
+    "description": "tax document status = cancelled"
+  },
+  "galleryTitle": "Component gallery",
+  "@galleryTitle": {
+    "description": "Title of the WP-9 acceptance artefact. Not a business screen."
+  },
+  "gallerySectionMoney": "Money",
+  "@gallerySectionMoney": {
+    "description": "Gallery section heading."
+  },
+  "gallerySectionMeasurement": "Measurement",
+  "@gallerySectionMeasurement": {
+    "description": "Gallery section heading."
+  },
+  "gallerySectionStatus": "Status",
+  "@gallerySectionStatus": {
+    "description": "Gallery section heading."
+  },
+  "gallerySectionReason": "Reason",
+  "@gallerySectionReason": {
+    "description": "Gallery section heading."
+  },
+  "gallerySectionOffline": "Offline",
+  "@gallerySectionOffline": {
+    "description": "Gallery section heading."
+  },
+  "gallerySectionStates": "States",
+  "@gallerySectionStates": {
+    "description": "Gallery section heading."
+  },
+  "galleryLargeText": "Large text",
+  "@galleryLargeText": {
+    "description": "Toggle that renders the gallery at the maximum supported text scale."
+  }
+}
