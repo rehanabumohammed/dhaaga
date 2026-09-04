@@ -1,0 +1,195 @@
+# Dhaaga CI.
+#
+# Two independent jobs, and the independence is deliberate rather than
+# incidental: test/architecture/boundaries_test.dart fails the suite if anything
+# under lib/ imports a database, network or storage package, so the client has
+# no data layer to share. A red database job tells you nothing about the client
+# and a red client job tells you nothing about the schema. Keeping them apart
+# keeps each one independently diagnosable.
+#
+# The database job is the contract in docs/ci.md, run against a clean
+# postgres:16 service container. It calls the existing scripts and reimplements
+# none of them (ADR-0002: "No build dependency beyond Python 3 and psql, both
+# present in CI").
+#
+# Golden tests are excluded here on purpose. No PNG baseline exists yet, and
+# generating one is a separate later milestone that will use this same
+# ubuntu-24.04 + Flutter 3.47.0 environment, so that the baselines and the
+# comparison share one renderer.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Database — the docs/ci.md contract, against a clean PostgreSQL 16.
+  # ---------------------------------------------------------------------------
+  database:
+    name: database (postgres 16)
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          # The connection strings the scripts expect carry no password, so the
+          # server must not ask for one. This mirrors scripts/db_local.sh:19,
+          # which runs initdb --auth=trust for exactly the same reason.
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+          # DHAAGA_DB_URL points at dhaaga_dev. Creating it at container init
+          # is one less step that can fail for its own reasons.
+          POSTGRES_DB: dhaaga_dev
+        ports:
+          # 5433 on the runner, because every default in this repository is
+          # 127.0.0.1:5433 — .env.example:11-12, scripts/db_local.sh:13, and the
+          # DHAAGA_ADMIN_URL fallback in all four shell harnesses. Mapping the
+          # port means no script needs an override and no script needs editing.
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      # scripts/env_loader.py: a variable already in the environment always wins
+      # over .env. There is no .env in CI and none is needed — load_env()
+      # returns an empty list when the file is absent (env_loader.py:122).
+      DHAAGA_DB_URL: postgres://postgres@127.0.0.1:5433/dhaaga_dev
+      # Read by selftest_migrations.sh, test_concurrency.sh, test_api_session.sh
+      # and attack_identity.sh, which create and drop scratch databases and a
+      # real second login role. Points at the always-present postgres database.
+      DHAAGA_ADMIN_URL: postgres://postgres@127.0.0.1:5433/postgres
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Toolchain versions
+        # First, so that a runner-image change surfaces here as a plain version
+        # mismatch rather than three steps later as a confusing failure.
+        run: |
+          python3 --version
+          psql --version
+          bash --version | head -1
+
+      # -- 0 -------------------------------------------------------------------
+      - name: env_loader self-test
+        run: python3 scripts/env_loader.py --selftest
+
+      # -- 1 -------------------------------------------------------------------
+      - name: Migration runner self-test
+        run: bash scripts/selftest_migrations.sh
+
+      # -- 2 -------------------------------------------------------------------
+      - name: Build the schema from empty
+        run: python3 scripts/migrate.py up
+
+      # -- 3 -------------------------------------------------------------------
+      - name: Verify checksums and rollback pairing
+        run: python3 scripts/migrate.py verify
+
+      # -- 3b ------------------------------------------------------------------
+      - name: Seed the development business
+        # Not in the numbered list in docs/ci.md, but required by the suite:
+        # db/tests/0009_seed_integrity.sql line 1 reads "Requires scripts/seed.py
+        # to have run first, which is the order CI uses: migrate -> seed -> test".
+        # It is in the command block at docs/ci.md:59. --verify loads, re-loads
+        # and proves idempotency in one invocation (scripts/seed.py:11).
+        run: python3 scripts/seed.py --verify
+
+      # -- 4 -------------------------------------------------------------------
+      - name: Database test suite
+        run: python3 scripts/test.py
+
+      # -- 4b ------------------------------------------------------------------
+      - name: Concurrency harness
+        # Races the single-session suite cannot express. Builds and drops its
+        # own scratch database via DHAAGA_ADMIN_URL.
+        run: bash scripts/test_concurrency.sh
+
+      # -- 4c ------------------------------------------------------------------
+      - name: API session harness
+        # Creates a real second login role shaped like PostgREST's authenticator
+        # and connects as it, because the SQL suite's session is trusted
+        # whichever role it SET ROLEs to.
+        run: bash scripts/test_api_session.sh
+
+      # -- 4d ------------------------------------------------------------------
+      - name: Identity adversarial probe
+        # Attacks identity and authorization from an untrusted login role and
+        # judges every attempt by reading the state back as the owner, because
+        # under row-level security a forbidden write frequently "succeeds"
+        # while changing nothing.
+        run: bash scripts/attack_identity.sh
+
+      # -- 4e ------------------------------------------------------------------
+      - name: Hard-coded rule scan — self-test first
+        # So that a clean result means the scan works, rather than that it
+        # looked nowhere.
+        run: python3 scripts/scan_hardcoded.py --selftest
+
+      - name: Hard-coded rule scan
+        run: python3 scripts/scan_hardcoded.py
+
+      # -- 5 -------------------------------------------------------------------
+      - name: Teardown and rebuild
+        run: |
+          python3 scripts/migrate.py reset
+          python3 scripts/migrate.py up
+
+  # ---------------------------------------------------------------------------
+  # Flutter client foundation (WP-9). No database, by design.
+  # ---------------------------------------------------------------------------
+  flutter:
+    name: flutter client
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Flutter
+        # Pinned exactly. An unpinned runner means goldens — and, later, this
+        # job's own results — change on Flutter's release schedule rather than
+        # on ours. Dart is deliberately not pinned separately: a Flutter app
+        # uses the SDK bundled with its Flutter release, and a second pin can
+        # only contradict the first.
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: 3.47.0
+          channel: stable
+          cache: true
+
+      - name: Toolchain versions
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Resolve dependencies
+        # Also runs gen-l10n, because pubspec.yaml sets `generate: true`. That
+        # writes lib/l10n/app_localizations*.dart, which are generated artefacts
+        # kept out of version control; they are produced here from the committed
+        # .arb catalogues, which are the source of truth.
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        # Goldens excluded — see the note at the top of this file.
+        run: flutter test --exclude-tags golden
