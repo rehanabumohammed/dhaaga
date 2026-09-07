@@ -100,12 +100,12 @@ def db_url() -> str:
 
 def psql(sql: str, *, quiet: bool = True, tuples_only: bool = False) -> str:
     """Run SQL through psql with ON_ERROR_STOP so a failure is a failure."""
-    cmd = ["psql", db_url(), "-v", "ON_ERROR_STOP=1", "--no-psqlrc"]
+    cmd = ["psql", "-v", "ON_ERROR_STOP=1", "--no-psqlrc"]
     if tuples_only:
         cmd += ["-t", "-A"]
     if quiet:
         cmd += ["-q"]
-    cmd += ["-c", sql]
+    cmd += ["-c", sql, db_url()]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     if proc.returncode != 0:
         raise MigrationError(proc.stderr.strip() or proc.stdout.strip())
@@ -113,10 +113,10 @@ def psql(sql: str, *, quiet: bool = True, tuples_only: bool = False) -> str:
 
 
 def psql_file(path: Path, *, single_transaction: bool) -> None:
-    cmd = ["psql", db_url(), "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-q"]
+    cmd = ["psql", "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-q"]
     if single_transaction:
         cmd += ["--single-transaction"]
-    cmd += ["-f", str(path)]
+    cmd += ["-f", str(path), db_url()]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     if proc.returncode != 0:
         raise MigrationError(f"{path.name}\n{proc.stderr.strip()}")
