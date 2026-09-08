@@ -141,10 +141,10 @@ with attempted as (
 select dhaaga_test.eq((select count(*)::int from attempted), 0,
     'an update aimed at business B''s customer touches nothing - the row does not exist for this caller');
 
-with attempted as (
-    delete from customer where id = 'c0000000-0000-0000-0000-00000000000b' returning 1)
-select dhaaga_test.eq((select count(*)::int from attempted), 0,
-    'and neither does a delete');
+select dhaaga_test.throws(
+    $$delete from customer
+      where id = 'c0000000-0000-0000-0000-00000000000b'$$,
+    'an authenticated user cannot hard-delete a customer', '42501');
 
 -- ---------------------------------------------------------------------------
 -- Branch isolation, inside one business

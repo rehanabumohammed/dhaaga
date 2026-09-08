@@ -58,3 +58,11 @@ app.*.map.json
 /supabase/migrations/
 
 /supabase/.temp/
+# ---------------------------------------------------------------------------
+# Dhaaga backup artifacts (WP-10)
+# ---------------------------------------------------------------------------
+/dhaaga_backup*.sql
+/backup.sql
+/dump.sql
+/*.dump
+/backups/

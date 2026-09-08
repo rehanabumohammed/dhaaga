@@ -65,7 +65,7 @@ def db_url() -> str:
 
 def run_sql(sql: str) -> str:
     proc = subprocess.run(
-        ["psql", db_url(), "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-t", "-A", "-c", sql],
+        ["psql", "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-t", "-A", "-c", sql, db_url()],
         capture_output=True, text=True,
     )
     if proc.returncode != 0:
@@ -82,8 +82,8 @@ def load() -> int:
     for path in files:
         print(f"  loading {path.name} ...", end=" ", flush=True)
         proc = subprocess.run(
-            ["psql", db_url(), "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-q",
-             "--single-transaction", "-f", str(path)],
+            ["psql", "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-q",
+             "--single-transaction", "-f", str(path), db_url()],
             capture_output=True, text=True,
         )
         if proc.returncode != 0:

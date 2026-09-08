@@ -347,11 +347,11 @@ select dhaaga_test.throws(
               '7777aaaa-0000-0000-0000-000000000040')$$,
     'but cannot add a permission to the role they themselves hold - the self-escalation route', '42501');
 
-select dhaaga_test.lives(
+select dhaaga_test.throws(
     $$delete from role_permission
        where role_id = '7777aaaa-0000-0000-0000-000000000030'
          and permission_id = '7777aaaa-0000-0000-0000-000000000043'$$,
-    'while giving up authority over their own role needs no protection');
+    'hard deletion of role permissions is prohibited', '42501');
 
 select dhaaga_test.throws(
     $$delete from role where id = '7777aaaa-0000-0000-0000-000000000030'$$,

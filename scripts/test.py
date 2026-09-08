@@ -96,7 +96,7 @@ def run_file(path: Path) -> tuple[list[str], str | None]:
 
     try:
         proc = subprocess.run(
-            ["psql", db_url(), "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-q", "-f", driver],
+            ["psql", "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-q", "-f", driver, db_url()],
             capture_output=True,
             text=True,
         )
