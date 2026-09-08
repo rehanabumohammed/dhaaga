@@ -66,3 +66,6 @@ app.*.map.json
 /dump.sql
 /*.dump
 /backups/
+
+# Flutter generated localization artifacts
+/lib/l10n/app_localizations*.dart
