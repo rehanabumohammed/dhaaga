@@ -65,11 +65,11 @@ jobs:
             }
           done
 
-          actual_count=$(find test/goldens -maxdepth 1 -type f -name '*.png' | wc -l)
+          actual_count=$(find test/golden/goldens -maxdepth 1 -type f -name '*.png' | wc -l)
 
           if [ "$actual_count" -ne "${#expected[@]}" ]; then
             echo "Expected ${#expected[@]} PNG goldens, found $actual_count"
-            find test/goldens -maxdepth 1 -type f -name '*.png' -print | sort
+            find test/golden/goldens -maxdepth 1 -type f -name '*.png' -print | sort
             exit 1
           fi
 
