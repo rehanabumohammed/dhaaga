@@ -1,0 +1,83 @@
+﻿name: Generate Flutter Goldens
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-goldens:
+    name: generate goldens
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: 3.47.0
+          channel: stable
+          cache: true
+
+      - name: Toolchain versions
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Generate golden baselines
+        run: flutter test --update-goldens test/golden
+
+      - name: Verify generated goldens
+        run: flutter test --tags golden test/golden
+
+      - name: Verify golden inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expected=(
+            "money_strong.png"
+            "money_negative_muted.png"
+            "money_strong_2x.png"
+            "status_salesOrderLifecycle.png"
+            "status_numberLeaseStatus.png"
+            "status_stockTransferStatus.png"
+            "status_taxDocumentStatus.png"
+            "offline_within_tolerance.png"
+            "offline_escalated.png"
+            "state_ready.png"
+            "state_loading.png"
+            "state_empty.png"
+            "state_error.png"
+            "state_disabled.png"
+          )
+
+          for file in "${expected[@]}"; do
+            test -f "test/goldens/$file" || {
+              echo "Missing golden: test/goldens/$file"
+              exit 1
+            }
+          done
+
+          actual_count=$(find test/goldens -maxdepth 1 -type f -name '*.png' | wc -l)
+
+          if [ "$actual_count" -ne "${#expected[@]}" ]; then
+            echo "Expected ${#expected[@]} PNG goldens, found $actual_count"
+            find test/goldens -maxdepth 1 -type f -name '*.png' -print | sort
+            exit 1
+          fi
+
+          echo "Golden inventory verified: $actual_count PNG files."
+
+      - name: Upload golden baselines
+        uses: actions/upload-artifact@v4
+        with:
+          name: dhaaga-flutter-goldens
+          path: test/goldens/
+          if-no-files-found: error
