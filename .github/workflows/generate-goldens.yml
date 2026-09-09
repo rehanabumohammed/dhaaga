@@ -59,8 +59,8 @@ jobs:
           )
 
           for file in "${expected[@]}"; do
-            test -f "test/goldens/$file" || {
-              echo "Missing golden: test/goldens/$file"
+            test -f "test/golden/goldens/$file" || {
+              echo "Missing golden: test/golden/goldens/$file"
               exit 1
             }
           done
@@ -79,5 +79,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dhaaga-flutter-goldens
-          path: test/goldens/
+          path: test/golden/goldens/
           if-no-files-found: error
