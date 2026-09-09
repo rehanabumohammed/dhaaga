@@ -189,20 +189,72 @@ cloud string.
 
 ## 6 · Backup and restore drill (WP-10)
 
-Do this before the project holds anything you would mind losing.
+Do this before the project holds data you would mind losing.
+
+### 6.1 Create a logical backup
+
+The canonical backup mechanism is provider-independent PostgreSQL `pg_dump`.
+
+Back up the cloud development/staging database, not the local `dhaaga_dev` database.
+
+Backup destination:
+
+```text
+C:\DhaagaBackups\
+```
+For unattended operation, PostgreSQL credentials must be supplied through the Windows PostgreSQL password file (`pgpass.conf`) referenced by `PGPASSFILE`. Do not place database passwords in the command line, scripts, source control, or documentation.
+
+
+Example PowerShell procedure:
 
 ```powershell
-# take a logical backup
-supabase db dump -f dhaaga_backup.sql --linked
+$backupRoot = 'C:\DhaagaBackups'
+New-Item -ItemType Directory -Force -Path $backupRoot | Out-Null
 
-# confirm it is real, not an empty file
-Get-Item dhaaga_backup.sql | Select-Object Length
-Select-String -Path dhaaga_backup.sql -Pattern "CREATE TABLE" | Measure-Object
+$env:PGPASSFILE = Join-Path $env:APPDATA 'postgresql\pgpass.conf'
+
+$stamp = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ')
+$backup = Join-Path $backupRoot "dhaaga_backup_${stamp}.sql"
+
+& 'C:\Program Files\PostgreSQL\18\bin\pg_dump.exe' `
+    "$env:DHAAGA_DB_URL" `
+    --format=plain `
+    --file="$backup"
+
+if ($LASTEXITCODE -ne 0) {
+    throw "pg_dump failed with exit code $LASTEXITCODE"
+}
+
+Get-Item $backup | Select-Object FullName, Length, LastWriteTimeUtc
+Get-FileHash $backup -Algorithm SHA256
 ```
 
-Expect a file of meaningful size and roughly 89 `CREATE TABLE` lines. Restoring
-it into a scratch project and querying it is the actual drill, and it is
-reported with WP-10 rather than assumed here.
+The connection URL used for the cloud database must use the appropriate TLS configuration (for Supabase, `sslmode=require`) and must not contain an embedded password.
+
+The backup file is sensitive business data. Keep it outside the Git repository, restrict access, encrypt it at rest, and apply the project's retention policy.
+
+The original backup artifact is immutable. Record its actual file timestamp, size, and SHA-256 checksum; do not rename an existing backup merely to correct a timestamp.
+
+### 6.2 Restore drill
+
+Backup creation and restoration are separate operations.
+
+A successful `pg_dump` only proves that the database could be serialized. WP-10 is complete only after a backup has been restored into a separate scratch PostgreSQL database and the recovered application data can be queried.
+
+The restore target must be disposable and must not be the production/development database.
+
+The scratch restore procedure must account for provider-managed Supabase objects that do not belong to the application's portable PostgreSQL recovery boundary. Do not create fake Supabase platform roles or infrastructure merely to make a raw provider dump appear restorable.
+
+The recovery drill must verify:
+
+1. the backup can be consumed by the restore procedure;
+2. the application schema is restored;
+3. application data is restored;
+4. representative queries succeed; and
+5. recovered row counts can be compared with the source database.
+
+Record the restore result as WP-10 evidence.
+```
 
 ---
 
