@@ -43,13 +43,13 @@ jobs:
 
           expected=(
             "money_strong.png"
-            "money_negative_muted.png"
+            "money_negative.png"
             "money_strong_2x.png"
             "status_salesOrderLifecycle.png"
             "status_numberLeaseStatus.png"
             "status_stockTransferStatus.png"
             "status_taxDocumentStatus.png"
-            "offline_within_tolerance.png"
+            "offline_within.png"
             "offline_escalated.png"
             "state_ready.png"
             "state_loading.png"
