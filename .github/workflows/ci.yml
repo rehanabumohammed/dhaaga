@@ -192,4 +192,4 @@ jobs:
 
       - name: Test
         # Goldens excluded — see the note at the top of this file.
-        run: flutter test --exclude-tags golden
+        run: flutter test
