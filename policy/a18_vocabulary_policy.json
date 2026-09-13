@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "policy_id": "A18-V1",
+  "title": "Dhaaga Commercial & Business Administration Vocabulary Classification — approved staff-facing restriction policy",
+  "non_exhaustive": true,
+  "notes": [
+    "APPROVED POLICY ONLY. Every row exists because a Business Owner decided it and recorded that decision in the Business Decision Record named by its bdr_reference. A commit, a pull request, a CI result or an engineering recommendation is not business approval.",
+    "This registry is deliberately NON-EXHAUSTIVE. It is not a vocabulary of Dhaaga, an accounting denylist, or a list of every candidate term discovered during analysis. A term that is absent is UNRESOLVED: no business decision exists for it, and it is not enforced.",
+    "Accounting is ONE DOMAIN within the broader commercial and business-administration vocabulary. An accounting term is not automatically restricted.",
+    "Enforcement is DERIVED: a term is enforced when decision_status is 'approved' and audience_policy is 'staff-restricted'. There is deliberately no stored 'enforced' field, because a stored flag can contradict the decision it claims to represent. scripts/scan_vocabulary.py refuses any row carrying an unrecognised field.",
+    "Vocabulary evolves through the Controlled Business Evolution Gate: business need -> business decision record -> approved policy update -> technical impact assessment -> implementation -> tests -> CI. Adding, amending, deferring or withdrawing a term is an ordinary business-policy change and does not reopen the architecture.",
+    "There is no bypass. No inline allowlist, developer comment, exception file, environment variable or CI skip exists in V1."
+  ],
+  "scope": {
+    "catalogue": "lib/l10n/app_en.arb",
+    "scans": "message values only",
+    "never_scanned": [
+      "ARB keys",
+      "ARB metadata and @descriptions",
+      "generated localisation Dart (lib/l10n/app_localizations*.dart)",
+      "lib/l10n/app_hi.arb — Hindi is outside V1 enforcement scope",
+      "database content, migrations and seed data",
+      "tenant-owned vocabulary",
+      "developer-only text and technical identifiers"
+    ],
+    "non_staff_key_prefixes": [
+      "gallery"
+    ],
+    "non_staff_prefix_evidence": "lib/l10n/app_en.arb declares the gallery key group as non-staff in its own metadata: @galleryTitle.description reads 'Title of the WP-9 acceptance artefact. Not a business screen.' Eight of the catalogue's 42 message keys carry this prefix (galleryTitle, gallerySectionMoney, gallerySectionMeasurement, gallerySectionStatus, gallerySectionReason, gallerySectionOffline, gallerySectionStates, galleryLargeText), leaving 34 staff-facing. This is the current WP-9 convention, not a permanent multi-audience architecture.",
+    "unclassified_keys_are": "staff-facing — a new key nobody classified is protected, not exempt"
+  },
+  "terms": [
+    {
+      "term": "debit",
+      "decision_status": "approved",
+      "audience_policy": "staff-restricted",
+      "reason": "Prevents internal commercial/accounting terminology from unintentionally appearing in staff-facing language, while allowing Dhaaga's business vocabulary to evolve through controlled business governance. Restricted from English staff-facing message values only; the term remains valid in internal, administrative, technical, accounting, database and other non-staff-facing contexts.",
+      "bdr_reference": "A18-BDR-001"
+    }
+  ]
+}

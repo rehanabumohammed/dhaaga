@@ -146,6 +146,12 @@ jobs:
       - name: Hard-coded rule scan
         run: python3 scripts/scan_hardcoded.py
 
+      # -- 4f ------------------------------------------------------------------
+      - name: Staff vocabulary scan — self-test first
+        run: python3 scripts/scan_vocabulary.py --selftest
+
+      - name: Staff vocabulary scan
+        run: python3 scripts/scan_vocabulary.py
       # -- 5 -------------------------------------------------------------------
       - name: Teardown and rebuild
         run: |
