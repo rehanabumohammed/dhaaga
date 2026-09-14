@@ -28,6 +28,7 @@ The tenant root. Exactly one row in V1; the schema is multi-tenant from day one 
 | `currency_code` | text | not null · default `'INR'::text` |
 | `financial_year_start_month` | smallint | not null · default `4` |
 | `status` | text | not null · default `'active'::text` |
+| `change_xid` | xid8 |  |
 
 Constraints:
 
@@ -52,6 +53,7 @@ An outlet. Owns cash, stock, capacity, document series and its own profit and lo
 | `timezone` | text | not null · default `'Asia/Kolkata'::text` |
 | `opened_on` | date |  |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -70,6 +72,7 @@ A person the business knows: staff, whether or not they log in. Authentication i
 | `status` | text | not null · default `'active'::text` |
 | `last_seen_at` | timestamp with time zone |  |
 | `auth_user_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -87,6 +90,7 @@ The permission vocabulary, seeded per business. is_books_surface marks the accou
 | `domain` | text | not null |
 | `description` | text |  |
 | `is_books_surface` | boolean | not null · default `false` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -101,6 +105,7 @@ A named permission set. Seeded per business; the owner may adjust which permissi
 | `description` | text |  |
 | `is_system` | boolean | not null · default `false` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -112,6 +117,7 @@ Which permissions a role holds. Editable by the owner: roles are seeded, their c
 |---|---|---|
 | `role_id` | uuid | not null |
 | `permission_id` | uuid | not null |
+| `change_xid` | xid8 |  |
 
 References: `business`, `permission`, `role`, `permission`, `role`
 
@@ -129,6 +135,7 @@ One row per (person, branch, role). A manager covering two outlets has two rows 
 | `revoked_at` | timestamp with time zone |  |
 | `revoked_by` | uuid |  |
 | `revoke_reason` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `branch`, `role`, `app_user`, `role`, `app_user`
 
@@ -149,6 +156,7 @@ A registered client device. Every offline action is attributed to one (§5.4).
 | `last_sync_at` | timestamp with time zone |  |
 | `offline_minutes_total` | bigint | not null · default `0` |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `branch`, `app_user`
 
@@ -170,6 +178,7 @@ One counter per branch, document type and financial year (BR-14).
 | `padding` | smallint | not null · default `5` |
 | `next_value` | integer | not null · default `1` |
 | `is_offline_leasable` | boolean | not null · default `false` |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`
 
@@ -195,6 +204,7 @@ A block of numbers handed to a device so an offline token prints its final numbe
 | `expires_at` | timestamp with time zone | not null |
 | `status` | text | not null · default `'active'::text` |
 | `closed_at` | timestamp with time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `device`, `number_series`
 
@@ -219,6 +229,7 @@ Every number issued but never used, with a reason. This is what makes each gap i
 | `reason_text` | text |  |
 | `voided_at` | timestamp with time zone | not null · default `now()` |
 | `voided_by` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `number_lease`, `number_series`
 
@@ -242,6 +253,7 @@ Append-only record of who changed what, when, from where (BR-13). No update or d
 | `source` | text | not null · default `'app'::text` |
 | `occurred_at` | timestamp with time zone | not null · default `now()` |
 | `recorded_at` | timestamp with time zone | not null · default `now()` |
+| `change_xid` | xid8 |  |
 
 References: `app_user`, `branch`, `business`, `device`
 
@@ -265,6 +277,7 @@ Languages this business operates in. V1 activates English; Hindi is architectura
 | `is_active` | boolean | not null · default `true` |
 | `is_default` | boolean | not null · default `false` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -283,6 +296,7 @@ Translations for tenant-owned data labels. App chrome is translated in the clien
 | `field` | text | not null |
 | `locale_code` | text | not null |
 | `text_value` | text | not null |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -303,6 +317,7 @@ The registry of every owner-controllable rule (AP-1, BR-21). A literal threshold
 | `is_effective_dated` | boolean | not null · default `false` |
 | `is_ca_validated_scope` | boolean | not null · default `false` |
 | `description` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -325,6 +340,7 @@ Every value a setting has ever held, with the window it applied in. This is what
 | `changed_at` | timestamp with time zone | not null · default `now()` |
 | `reason_code` | text |  |
 | `reason_text` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `app_user`, `config_setting`
 
@@ -344,6 +360,7 @@ A branch-level value for a setting whose scope allows it. Absent means the busin
 | `value` | jsonb | not null |
 | `effective_from` | timestamp with time zone | not null · default `now()` |
 | `effective_to` | timestamp with time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `config_setting`
 
@@ -364,6 +381,7 @@ The controlled lists behind every "why did you do that" prompt. The owner edits 
 | `requires_text` | boolean | not null · default `false` |
 | `is_active` | boolean | not null · default `true` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -385,6 +403,7 @@ The tax identity in force for a business or a branch over a period. Per-branch G
 | `effective_from` | date | not null |
 | `effective_to` | date |  |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`
 
@@ -404,6 +423,7 @@ A tax classification with its HSN or SAC code. Stitching is a service; fabric is
 | `hsn_sac` | text |  |
 | `description` | text |  |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -422,6 +442,7 @@ A rate and the window it applies in. Reprinting a two-year-old invoice uses the 
 | `effective_from` | date | not null |
 | `effective_to` | date |  |
 | `note` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `tax_code`
 
@@ -440,6 +461,7 @@ The split a rate breaks into on an invoice. Intra-state work splits CGST and SGS
 | `tax_rate_id` | uuid | not null |
 | `component` | text | not null |
 | `percent` | app.rate_percent | not null |
+| `change_xid` | xid8 |  |
 
 References: `business`, `tax_rate`
 
@@ -462,6 +484,7 @@ A set of prices with a validity window. branch_id null means it applies business
 | `is_default` | boolean | not null · default `false` |
 | `effective_from` | date | not null |
 | `effective_to` | date |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`
 
@@ -482,6 +505,7 @@ What a customer message says, per event, channel and language. Editable by the o
 | `subject` | text |  |
 | `body` | text | not null |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -505,6 +529,7 @@ A qualified CA's approval of the tax and accounting configuration, hashed agains
 | `is_current` | boolean | not null · default `true` |
 | `superseded_at` | timestamp with time zone |  |
 | `superseded_reason` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -526,6 +551,7 @@ A family or group served together. A lookup and a grouping - never a second ledg
 | `city` | text |  |
 | `postal_code` | text |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -548,6 +574,7 @@ A person. Identity is the uuid; the phone is an attribute (§2.3). Business-scop
 | `notes` | text |  |
 | `status` | text | not null · default `'active'::text` |
 | `merged_into_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `branch`, `customer`, `branch`
 
@@ -568,6 +595,7 @@ Membership of a household, with a relation label. A join table from day one so s
 | `customer_id` | uuid | not null |
 | `relation` | text |  |
 | `is_primary_contact` | boolean | not null · default `false` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `customer`, `household`
 
@@ -590,6 +618,7 @@ A way to reach someone. Never unique: two people may share a number, one person 
 | `is_primary` | boolean | not null · default `false` |
 | `is_verified` | boolean | not null · default `false` |
 | `verified_at` | timestamp with time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `customer`, `household`
 
@@ -613,6 +642,7 @@ A suggested duplicate awaiting human review. Nothing merges automatically: wrong
 | `reviewed_by` | uuid |  |
 | `reviewed_at` | timestamp with time zone |  |
 | `dismissed_reason` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `customer`, `customer`, `app_user`
 
@@ -640,6 +670,7 @@ A merge event, with everything needed to reverse it. Merges get done wrong; the 
 | `unmerged_at` | timestamp with time zone |  |
 | `unmerged_by` | uuid |  |
 | `unmerge_reason` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `customer`, `app_user`, `customer`, `app_user`
 
@@ -660,6 +691,7 @@ Shirt, kurta, blouse, lehenga, blazer. Owner-configurable (AP-1); names are tran
 | `requires_trial` | boolean | not null · default `false` |
 | `is_active` | boolean | not null · default `true` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -679,6 +711,7 @@ Collar, cuff, pocket, neck, sleeve - the choices that make a garment this garmen
 | `selection_type` | text | not null · default `'single'::text` |
 | `is_required` | boolean | not null · default `false` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment_type`
 
@@ -699,6 +732,7 @@ One choice within a style group, with its price and time effect.
 | `extra_minutes` | integer | not null · default `0` |
 | `is_active` | boolean | not null · default `true` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `style_option_group`
 
@@ -713,6 +747,7 @@ What a garment type costs in a given price list, and which tax classification ap
 | `unit_price` | app.money_amount | not null |
 | `tax_code_id` | uuid |  |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment_type`, `price_list`, `tax_code`
 
@@ -731,6 +766,7 @@ The field set for a garment type, versioned. Adding a custom field creates a new
 | `is_current` | boolean | not null · default `true` |
 | `effective_from` | timestamp with time zone | not null · default `now()` |
 | `note` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment_type`
 
@@ -751,6 +787,7 @@ One measurement field. Labels are translated via the translation table so a Hind
 | `group_name` | text |  |
 | `help_text` | text |  |
 | `display_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `measurement_template`
 
@@ -771,6 +808,7 @@ A named measurement set for one customer and garment type - "regular", "loose". 
 | `name` | text | not null · default `'regular'::text` |
 | `is_default` | boolean | not null · default `true` |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `customer`, `garment_type`
 
@@ -790,6 +828,7 @@ An append-only measurement event. Corrections create a revision; they never over
 | `notes` | text |  |
 | `is_current` | boolean | not null · default `true` |
 | `values_cache` | jsonb | not null · default `'{}'::jsonb` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `measurement_profile`, `app_user`, `measurement_template`
 
@@ -808,6 +847,7 @@ The typed, queryable form of a revision. Analytics and the duplicate-scoring sig
 | `field_code` | text | not null |
 | `value_numeric` | numeric(8,3) |  |
 | `value_text` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `measurement_revision`
 
@@ -833,6 +873,7 @@ A deep copy of the measurements a garment was cut to, with no live link back to 
 | `replaced_snapshot_id` | uuid |  |
 | `replace_reason_code` | text |  |
 | `replace_reason_text` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `app_user`, `garment`, `measurement_snapshot`, `measurement_revision`, `measurement_template`
 
@@ -857,6 +898,7 @@ Every photo, signature and document in the system, attached to whatever it belon
 | `captured_at` | timestamp with time zone |  |
 | `uploaded_by` | uuid |  |
 | `sync_state` | text | not null · default `'pending'::text` |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `app_user`
 
@@ -877,6 +919,7 @@ The production route for a garment type. A blouse skips what a blazer needs, and
 | `version` | integer | not null · default `1` |
 | `is_current` | boolean | not null · default `true` |
 | `note` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment_type`
 
@@ -895,6 +938,7 @@ One step of a production route, with the standard minutes the capacity engine sc
 | `is_outsourced` | boolean | not null · default `false` |
 | `is_wage_bearing` | boolean | not null · default `true` |
 | `requires_qc` | boolean | not null · default `false` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `workflow_template`
 
@@ -914,6 +958,7 @@ Normal, urgent, VIP - owner-defined, with the weight each carries in the queue.
 | `sort_order` | integer | not null · default `100` |
 | `is_default` | boolean | not null · default `false` |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -928,6 +973,7 @@ The normal working week for a branch. Non-working time is skipped when a promise
 | `is_working` | boolean | not null · default `true` |
 | `opens_at` | time without time zone |  |
 | `closes_at` | time without time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`
 
@@ -948,6 +994,7 @@ Festival closures, half-days and the occasional extra working Sunday.
 | `opens_at` | time without time zone |  |
 | `closes_at` | time without time zone |  |
 | `reason` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`
 
@@ -963,6 +1010,7 @@ How many minutes a person actually has in a day, and how fast they work relative
 | `efficiency_factor` | numeric(4,2) | not null · default `1.00` |
 | `effective_from` | date | not null |
 | `effective_to` | date |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `app_user`
 
@@ -983,6 +1031,7 @@ Who may be scheduled for what. Work is never scheduled into a pool that cannot d
 | `garment_type_id` | uuid | not null |
 | `skill_level` | smallint | not null · default `3` |
 | `is_eligible` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment_type`, `app_user`
 
@@ -1011,6 +1060,7 @@ The commercial agreement. Its delivery status is derived from its garments, neve
 | `cancel_reason_code` | text |  |
 | `cancel_reason_text` | text |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `household`, `branch`, `business`, `customer`, `price_list`, `priority_class`
 
@@ -1038,6 +1088,7 @@ A priced line. Quantity here becomes that many garment rows (BR-07): the line is
 | `tax_code_id` | uuid |  |
 | `line_no` | integer | not null · default `1` |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `garment_type`, `sales_order`, `tax_code`
 
@@ -1072,6 +1123,7 @@ One physical piece. Everything on the shop floor - assignment, capacity, wages, 
 | `cancelled_at` | timestamp with time zone |  |
 | `cancel_reason_code` | text |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `workflow_stage`, `measurement_snapshot`, `order_item`
 
@@ -1094,6 +1146,7 @@ The style choices for one garment, with the price and time they carried when the
 | `option_id` | uuid | not null |
 | `price_delta_applied` | app.money_amount | not null · default `0` |
 | `extra_minutes_applied` | integer | not null · default `0` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment`, `style_option_group`, `style_option`
 
@@ -1112,6 +1165,7 @@ A work order for one tailor, batching one or more garments. Printed with a QR co
 | `returned_at` | timestamp with time zone |  |
 | `status` | text | not null · default `'open'::text` |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `app_user`, `branch`, `business`
 
@@ -1130,6 +1184,7 @@ Which garments a job card carries. A link table rather than a column on garment,
 | `garment_id` | uuid | not null |
 | `is_active` | boolean | not null · default `true` |
 | `removed_at` | timestamp with time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment`, `job_card`
 
@@ -1153,6 +1208,7 @@ One stage of one garment on one job card. The row that feeds capacity, wages, bo
 | `status` | text | not null · default `'pending'::text` |
 | `piece_rate` | app.money_amount | not null · default `0` |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `app_user`, `branch`, `business`, `garment`, `job_card`, `workflow_stage`
 
@@ -1178,6 +1234,7 @@ A fitting. Repeatable: a garment may go to trial more than once, and each attemp
 | `occurred_at` | timestamp with time zone |  |
 | `outcome` | text |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `garment`
 
@@ -1203,6 +1260,7 @@ A rework job in its own right, not an edit to the original (BR-08). Fault party 
 | `due_date` | date |  |
 | `status` | text | not null · default `'open'::text` |
 | `completed_at` | timestamp with time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `garment`, `job_card`, `job_card`
 
@@ -1230,6 +1288,7 @@ A promise date changed by a person, with what it was, what it became and why (BR
 | `reason_text` | text |  |
 | `approved_by` | uuid |  |
 | `overridden_at` | timestamp with time zone | not null · default `now()` |
+| `change_xid` | xid8 |  |
 
 References: `app_user`, `branch`, `business`, `app_user`
 
@@ -1255,6 +1314,7 @@ One handover event. An order may have several: partial delivery is the normal ca
 | `collection_overridden` | boolean | not null · default `false` |
 | `override_reason_code` | text |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `attachment`, `branch`, `business`, `app_user`, `sales_order`
 
@@ -1268,6 +1328,7 @@ Which garments moved on a handover, and in which direction. The rule that a garm
 | `garment_id` | uuid | not null |
 | `direction` | text | not null · default `'out'::text` |
 | `return_reason_code` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `delivery_note`, `garment`
 
@@ -1292,6 +1353,7 @@ The chart of accounts, seeded per business. Cash is one account; per-branch cash
 | `is_system` | boolean | not null · default `false` |
 | `is_active` | boolean | not null · default `true` |
 | `description` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `account`
 
@@ -1314,6 +1376,7 @@ A month or a year. A locked period accepts no postings: corrections go to the cu
 | `closed_at` | timestamp with time zone |  |
 | `locked_at` | timestamp with time zone |  |
 | `locked_by` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `app_user`
 
@@ -1342,6 +1405,7 @@ One balanced accounting event. Immutable once posted: UPDATE and DELETE are revo
 | `reversal_reason_text` | text |  |
 | `posted_at` | timestamp with time zone | not null · default `now()` |
 | `posted_by` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `accounting_period`, `app_user`, `journal_entry`
 
@@ -1369,6 +1433,7 @@ One side of an entry, carrying the dimensions that make reporting derivable: bra
 | `staff_id` | uuid |  |
 | `stock_item_id` | uuid |  |
 | `memo` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `account`, `branch`, `business`, `customer`, `journal_entry`, `garment`, `app_user`
 
@@ -1394,6 +1459,7 @@ An open drawer for one branch, one day, one person. Closing it requires a counte
 | `status` | text | not null · default `'open'::text` |
 | `notes` | text |  |
 | `journal_entry_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `journal_entry`, `app_user`
 
@@ -1430,6 +1496,7 @@ A tax document. Totals are stored because the document must reprint identically 
 | `status` | text | not null · default `'issued'::text` |
 | `journal_entry_id` | uuid |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `household`, `branch`, `business`, `customer`, `delivery_note`, `journal_entry`, `sales_order`, `tax_profile`
 
@@ -1462,6 +1529,7 @@ One printed line, with the tax rate that applied at issue copied in rather than 
 | `taxable_amount` | app.money_amount | not null · default `0` |
 | `tax_amount` | app.money_amount | not null · default `0` |
 | `total_amount` | app.money_amount | not null · default `0` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment`, `invoice`, `order_item`, `tax_code`, `tax_rate`
 
@@ -1487,6 +1555,7 @@ The correction document for an issued invoice. An invoice is never edited; a cre
 | `tax_amount` | app.money_amount | not null · default `0` |
 | `total_amount` | app.money_amount | not null · default `0` |
 | `journal_entry_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `customer`, `invoice`, `journal_entry`
 
@@ -1508,6 +1577,7 @@ Cash, UPI, card, bank transfer, cheque - each mapped to an account. Adding "Payt
 | `settles_immediately` | boolean | not null · default `true` |
 | `is_active` | boolean | not null · default `true` |
 | `sort_order` | integer | not null · default `100` |
+| `change_xid` | xid8 |  |
 
 References: `account`, `business`
 
@@ -1534,6 +1604,7 @@ Money in or out, with an immutable history. Correction is by reversal only; the 
 | `reversal_reason_code` | text |  |
 | `journal_entry_id` | uuid |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `cash_session`, `customer`, `journal_entry`, `payment_mode`, `app_user`, `payment`, `app_user`
 
@@ -1557,6 +1628,7 @@ Which debt a payment settles. Its own table because one payment may settle four 
 | `order_id` | uuid |  |
 | `amount` | app.money_amount | not null |
 | `allocated_at` | timestamp with time zone | not null · default `now()` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `invoice`, `sales_order`, `payment`
 
@@ -1580,6 +1652,7 @@ Who you buy fabric, trims and services from.
 | `state_code` | text |  |
 | `notes` | text |  |
 | `is_active` | boolean | not null · default `true` |
+| `change_xid` | xid8 |  |
 
 References: `business`
 
@@ -1600,6 +1673,7 @@ A supplier invoice. Creates a payable; paying it is a separate event.
 | `status` | text | not null · default `'open'::text` |
 | `journal_entry_id` | uuid |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `journal_entry`, `supplier`
 
@@ -1623,6 +1697,7 @@ What was bought, at what cost - the source of weighted average cost for stock va
 | `tax_code_id` | uuid |  |
 | `tax_amount` | app.money_amount | not null · default `0` |
 | `total_amount` | app.money_amount | not null · default `0` |
+| `change_xid` | xid8 |  |
 
 References: `business`, `purchase_bill`, `tax_code`
 
@@ -1646,6 +1721,7 @@ Rent, electricity, transport - and the one route by which customer-owned materia
 | `reference` | text |  |
 | `description` | text |  |
 | `journal_entry_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `account`, `branch`, `business`, `journal_entry`, `payment_mode`, `supplier`
 
@@ -1664,6 +1740,7 @@ How one person is paid, over a period. All four schemes are supported; a salarie
 | `monthly_amount` | app.money_amount | not null · default `0` |
 | `effective_from` | date | not null |
 | `effective_to` | date |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `app_user`
 
@@ -1686,6 +1763,7 @@ What a stage of a garment type earns. Effective-dated, so raising a rate never r
 | `amount` | app.money_amount | not null |
 | `effective_from` | date | not null |
 | `effective_to` | date |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `garment_type`, `workflow_stage`, `app_user`
 
@@ -1714,6 +1792,7 @@ A payout run for one person over one period. Locking it freezes what was owed; p
 | `paid_at` | timestamp with time zone |  |
 | `payment_id` | uuid |  |
 | `journal_entry_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `journal_entry`, `payment`, `app_user`
 
@@ -1742,6 +1821,7 @@ What one person earned for one piece of work. Accrues when the task completes, i
 | `reason_text` | text |  |
 | `payout_id` | uuid |  |
 | `journal_entry_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `alteration`, `branch`, `business`, `garment`, `journal_entry`, `wage_payout`, `production_task`, `app_user`
 
@@ -1764,6 +1844,7 @@ Money advanced to a karigar against future work, recovered from payouts. Over-re
 | `payment_id` | uuid |  |
 | `status` | text | not null · default `'outstanding'::text` |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `payment`, `app_user`
 
@@ -1792,6 +1873,7 @@ Something the business owns and consumes: fabric by the metre, trims by the piec
 | `allow_negative` | boolean | not null · default `true` |
 | `is_active` | boolean | not null · default `true` |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `tax_code`
 
@@ -1820,6 +1902,7 @@ Append-only. Balances are derived from these rows; no screen edits a balance, an
 | `reason_text` | text |  |
 | `occurred_at` | timestamp with time zone | not null · default `now()` |
 | `journal_entry_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `garment`, `journal_entry`, `stock_item`
 
@@ -1844,6 +1927,7 @@ A materialised balance per item per branch, maintained for speed and fully rebui
 | `value_amount` | app.money_amount | not null · default `0` |
 | `last_movement_at` | timestamp with time zone |  |
 | `recomputed_at` | timestamp with time zone |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `stock_item`
 
@@ -1863,6 +1947,7 @@ Stock moving between outlets. Two halves, so what is in transit is never invisib
 | `received_at` | timestamp with time zone |  |
 | `received_by` | uuid |  |
 | `notes` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `branch`, `app_user`, `app_user`, `branch`
 
@@ -1883,6 +1968,7 @@ What was sent and what actually arrived. A difference requires an explanation.
 | `qty_sent` | app.quantity | not null |
 | `qty_received` | app.quantity |  |
 | `variance_reason` | text |  |
+| `change_xid` | xid8 |  |
 
 References: `business`, `stock_item`, `stock_transfer`
 
@@ -1913,6 +1999,7 @@ Cloth the customer brought. A custody obligation, not an asset: it appears in no
 | `return_ack_id` | uuid |  |
 | `declared_value_non_accounting` | app.money_amount |  |
 | `status` | text | not null · default `'held'::text` |
+| `change_xid` | xid8 |  |
 
 References: `branch`, `business`, `customer`, `sales_order`, `attachment`, `app_user`, `attachment`
 
@@ -1938,6 +2025,7 @@ Received, issued, wasted, returned. Remaining quantity is the sum of these - the
 | `reason_code` | text |  |
 | `note` | text |  |
 | `acknowledgment_id` | uuid |  |
+| `change_xid` | xid8 |  |
 
 References: `attachment`, `branch`, `business`, `garment`, `customer_material`, `app_user`
 

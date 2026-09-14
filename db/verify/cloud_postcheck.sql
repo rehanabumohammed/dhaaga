@@ -15,9 +15,9 @@ with expected as (
     select
         90::int         as table_count,
         91::int            as policy_count,
-        '7d9d364b550621e32391f6c623c6e9d3'::text            as schema_fingerprint,
-        52::int             as function_count,
-        '4e3b2cfe12ff95fbc3360ddc500405cd'::text         as function_fingerprint,
+        '65246a2adb47e0298a3535adced5db1c'::text            as schema_fingerprint,
+        54::int             as function_count,
+        'fac6fc230c6147dcaeacf17541b029b2'::text         as function_fingerprint,
         array['account','accounting_period','alteration','app_user','attachment','audit_event','audit_reason_requirement','branch','branch_calendar','business','calendar_exception','cash_session','config_branch_override','config_setting','config_version','credit_note','customer','customer_contact','customer_material','customer_material_movement','customer_merge','date_override','delivery_line','delivery_note','device','duplicate_candidate','expense','garment','garment_style_option','garment_type','household','household_member','invoice','invoice_line','job_card','job_card_garment','journal_entry','journal_line','locale','measurement_profile','measurement_revision','measurement_snapshot','measurement_template','measurement_value','notification_template','number_lease','number_series','number_void','order_item','payment','payment_allocation','payment_mode','permission','price_list','price_list_item','priority_class','production_task','purchase_bill','purchase_bill_line','reason_code','role','role_permission','sales_order','staff_advance','staff_capacity','staff_skill','stock_balance','stock_item','stock_movement','stock_transfer','stock_transfer_line','style_option','style_option_group','supplier','tax_code','tax_profile','tax_rate','tax_rate_component','template_field','translation','trial_event','user_branch_role','user_credential','validation_signoff','wage_entry','wage_payout','wage_rate','wage_scheme','workflow_stage','workflow_template']::text[] as table_names
 ),
 actual as (

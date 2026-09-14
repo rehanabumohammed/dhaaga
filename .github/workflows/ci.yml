@@ -152,6 +152,12 @@ jobs:
 
       - name: Staff vocabulary scan
         run: python3 scripts/scan_vocabulary.py
+      - name: Generated schema documentation check
+        run: python3 scripts/gen_schema_doc.py --check
+
+      - name: Generated cloud postcheck
+        run: python3 scripts/gen_cloud_check.py --check
+
       # -- 5 -------------------------------------------------------------------
       - name: Teardown and rebuild
         run: |

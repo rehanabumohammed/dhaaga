@@ -65,7 +65,7 @@ def q(sql: str) -> str:
     except EnvError as exc:
         print(f"\nconfiguration error: {exc}\n", file=sys.stderr)
         raise SystemExit(2)
-    r = subprocess.run(["psql", url, "-tA", "--no-psqlrc", "-c", sql],
+    r = subprocess.run(["psql", "-w", "-tA", "--no-psqlrc", "-c", sql, url],
                        capture_output=True, text=True)
     if r.returncode:
         print(r.stderr.strip(), file=sys.stderr)

@@ -76,12 +76,13 @@ def q(sql: str) -> list[list[str]]:
         print(f"\nconfiguration error: {exc}\n", file=sys.stderr)
         raise SystemExit(2)
     proc = subprocess.run(
-        ["psql", url, "-v", "ON_ERROR_STOP=1", "--no-psqlrc", "-t", "-A", "-F", "\x1f", "-c", sql],
-        capture_output=True, text=True, encoding="utf-8")
+    ["psql", "-w", "-v", "ON_ERROR_STOP=1", "--no-psqlrc",
+     "-t", "-A", "-F", "\x1f", "-c", sql, url],
+    capture_output=True, text=True, encoding="utf-8")
     if proc.returncode != 0:
         print(proc.stderr.strip(), file=sys.stderr)
         raise SystemExit(1)
-    return [line.split("\x1f") for line in proc.stdout.strip().splitlines() if line]
+    return [line.split("\x1f") for line in proc.stdout.splitlines() if line]
 
 
 def build() -> str:
