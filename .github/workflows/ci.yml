@@ -153,7 +153,22 @@ jobs:
       - name: Staff vocabulary scan
         run: python3 scripts/scan_vocabulary.py
       - name: Generated schema documentation check
-        run: python3 scripts/gen_schema_doc.py --check
+        run: |
+          echo "=== PostgreSQL session ==="
+          psql --no-psqlrc "$DHAAGA_DB_URL" \
+            -c "show search_path;" \
+            -c "select datname, datcollate, datctype from pg_database where datname = current_database();"
+
+          echo "=== regclass rendering ==="
+          psql --no-psqlrc "$DHAAGA_DB_URL" -t -A -c \
+            "select c.relname, c.oid::regclass::text
+             from pg_class c
+             join pg_namespace n on n.oid=c.relnamespace
+             where n.nspname='public' and c.relkind='r'
+             order by c.relname limit 10;"
+
+          echo "=== Generated schema check ==="
+          python3 scripts/gen_schema_doc.py --check
 
       - name: Generated cloud postcheck
         run: python3 scripts/gen_cloud_check.py --check
