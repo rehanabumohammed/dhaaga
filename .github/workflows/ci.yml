@@ -166,18 +166,16 @@ jobs:
              join pg_namespace n on n.oid=c.relnamespace
              where n.nspname='public' and c.relkind='r'
              order by c.relname limit 10;"
-                  echo "=== FK catalog ordering ==="
+          echo "=== Exact generator FK ordering ==="
           psql --no-psqlrc "$DHAAGA_DB_URL" -P border=2 -P footer=off -c "
             select
-                c.conrelid::regclass::text as table_name,
-                c.conname as constraint_name,
-                pg_get_constraintdef(c.oid) as constraint_definition
+                c.conrelid::regclass::text,
+                pg_get_constraintdef(c.oid)
             from pg_constraint c
-            join pg_namespace n on n.oid = c.connamespace
-            where n.nspname = 'public'
-              and c.contype = 'f'
-              and c.conrelid::regclass::text in ('role_permission', 'user_branch_role')
-            order by 1, 2, 3;
+            join pg_namespace n on n.oid=c.connamespace
+            where n.nspname='public'
+              and c.contype='f'
+            order by 1,2;
           "
 
           echo "=== Generated schema diff ==="
