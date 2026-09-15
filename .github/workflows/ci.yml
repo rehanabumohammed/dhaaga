@@ -167,6 +167,15 @@ jobs:
              where n.nspname='public' and c.relkind='r'
              order by c.relname limit 10;"
 
+          echo "=== Generated schema diff ==="
+          cp docs/schema.md /tmp/schema_committed.md
+          trap 'cp /tmp/schema_committed.md docs/schema.md' EXIT
+
+          python3 scripts/gen_schema_doc.py
+
+          diff -u /tmp/schema_committed.md docs/schema.md | sed -n '1,220p' || true
+          cp /tmp/schema_committed.md docs/schema.md
+
           echo "=== Generated schema check ==="
           python3 scripts/gen_schema_doc.py --check
 
